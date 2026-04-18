@@ -9,13 +9,13 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Connect to backend (adjust URL as needed for deployment)
-    const newSocket = io('http://localhost:5000', { autoConnect: false });
-    
-    if (user) {
-      newSocket.connect();
-      setSocket(newSocket);
-    }
+    if (!user) return;
+
+    // Connect to server socket
+    const newSocket = io('http://localhost:5005', { autoConnect: false });
+    newSocket.auth = { token: user.token };
+    newSocket.connect();
+    setSocket(newSocket);
 
     return () => newSocket.disconnect();
   }, [user]);

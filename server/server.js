@@ -29,6 +29,8 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/rooms', require('./routes/roomRoutes'));
 app.use('/api/questions', require('./routes/questionRoutes'));
+app.use('/api/execute', require('./routes/executionRoutes'));
+app.use('/api/sessions', require('./routes/sessionRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {

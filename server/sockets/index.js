@@ -13,18 +13,28 @@ module.exports = function (io) {
       // Broadcast code change to others in the room
       socket.to(roomId).emit('code-sync', code);
     });
+    
+    socket.on('code-executed', ({ roomId, result }) => {
+      io.to(roomId).emit('evaluation-result', result);
+    });
 
     socket.on('chat-message', ({ roomId, message, user }) => {
       io.to(roomId).emit('receive-message', { message, user, timestamp: new Date() });
     });
 
     socket.on('typing', ({ roomId, user }) => {
-      socket.to(roomId).emit('user-typing', user);
+      socket.to(roomId).emit('user-typing', user.name || 'User');
+    });
+
+    socket.on('sync-timer', ({ roomId, timeStr }) => {
+      socket.to(roomId).emit('timer-update', timeStr);
     });
 
     socket.on('leave-room', ({ roomId, user }) => {
       socket.leave(roomId);
-      socket.to(roomId).emit('user-left', { message: `${user.name} left the room.`, user });
+      if (user) {
+         socket.to(roomId).emit('user-left', { message: `${user.name} left the room.`, user });
+      }
     });
 
     socket.on('disconnect', () => {
